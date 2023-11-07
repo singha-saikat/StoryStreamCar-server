@@ -27,6 +27,7 @@ async function run() {
 
     const blogCollection = client.db("StoryStream").collection("blog");
     const commentCollection = client.db("StoryStream").collection("comments");
+    const wishListCollection = client.db("StoryStream").collection("items");
 
     app.post("/api/v1/user/create-blog", async (req, res) => {
       const blog = req.body;
@@ -111,6 +112,34 @@ async function run() {
         console.log(result);
       res.send(result);
     });
+    app.post('/api/v1/user/wishlist', async (req, res) => {
+      
+      try {
+        const wishItem = req.body;
+      console.log(req.body);
+      const result = await wishListCollection.insertOne(wishItem);
+      
+      res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+     
+     
+
+
+    });
+    app.get("/api/v1/wishlist", async (req, res) => {
+      const email = req.query?.email ;
+      // || 'saikatsingha50@gmail.com'
+      const query = {
+        user: email 
+      
+      };
+      const result = await wishListCollection.find(query).toArray();
+      console.log('dataget',result);
+      res.send(result);
+    });
+    
 
     await client.db("admin").command({ ping: 1 });
     console.log(
