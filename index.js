@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const blogCollection = client.db("StoryStream").collection("blog");
+    const commentCollection = client.db("StoryStream").collection("comments");
 
     app.post("/api/v1/user/create-blog", async (req, res) => {
       const blog = req.body;
@@ -62,6 +63,55 @@ async function run() {
       const result = await blogCollection.findOne(query);
       res.send(result);
     });
+
+    app.post('/api/v1/comments', async (req, res) => {
+      const { blogId, userName, userProfilePic, comment } = req.body;
+      
+      const newComment = {
+        blogId,
+        userName,
+        userProfilePic,
+        comment,
+      };
+      const result = await commentCollection.insertOne(newComment);
+      console.log(result);
+      res.send(result);
+
+
+    });
+    app.get("/api/v1/allComments", async (req, res) => {
+      const cursor = commentCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/api/v1/update-blog/:_id", async (req, res) => {
+      const id = req.params._id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await blogCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.patch("/api/v1/user/update-blog/:id", async (req, res) => {
+      const { id } = req.params;
+      const updates = req.body;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const options = { upsert: true };
+      const updatedData = {
+        $set: updates,
+      };
+
+      const result = await blogCollection.updateOne( query,
+        updatedData,
+        options);
+        console.log(result);
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
