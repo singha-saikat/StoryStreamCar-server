@@ -123,9 +123,6 @@ async function run() {
       } catch (error) {
         console.log(error);
       }
-     
-     
-
 
     });
     app.get("/api/v1/wishlist", async (req, res) => {
@@ -137,6 +134,17 @@ async function run() {
       };
       const result = await wishListCollection.find(query).toArray();
       console.log('dataget',result);
+      res.send(result);
+    });
+
+    app.delete('/api/v1/delete/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      console.log("delete", id);
+      const query = { _id: new ObjectId(id) };
+
+      const result = await wishListCollection.deleteOne(query);
+      console.log(result);
       res.send(result);
     });
     
