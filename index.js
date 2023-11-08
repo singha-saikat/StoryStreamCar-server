@@ -142,7 +142,6 @@ async function run() {
       
       };
       const result = await wishListCollection.find(query).toArray();
-      console.log('dataget',result);
       res.send(result);
     });
 
@@ -154,6 +153,13 @@ async function run() {
 
       const result = await wishListCollection.deleteOne(query);
       console.log(result);
+      res.send(result);
+    });
+
+    
+    app.get("/api/v1/featureBlogs", async (req, res) => {
+      const cursor = blogCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
     
