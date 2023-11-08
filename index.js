@@ -51,7 +51,16 @@ async function run() {
       res.send(latestBlogs);
     });
     app.get("/api/v1/allBlogs", async (req, res) => {
-      const cursor = blogCollection.find();
+      const queryObj = {}
+      const category = req.query.category;
+      const title = req.query.title;
+      if(category){
+        queryObj.category = category;
+      }
+      if(title){
+        queryObj.title = title;
+      }
+      const cursor = blogCollection.find(queryObj);
       const result = await cursor.toArray();
       res.send(result);
     });
